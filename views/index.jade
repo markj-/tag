@@ -1,28 +1,33 @@
 extends layout
 
 block content
-  h1= 'Players'
 
-  ul.players
-    if users.length
-      each user, i in users
-        li(data-bluetooth=user.bluetooth)= user.username
-          if user.score > 0
-            span.score= user.score
-    else
-      li= 'Waiting for players'
+  h1.end-game-message= 'Game Over'
 
-  h1.join-game-heading= 'Join the game'
+  div.game-view
+    h1= 'Players'
 
-  form.join-game-form
-    ul
-      li
-        input.join-game-form__username(name='username')
-        input.join-game-form__bluetooth(name='bluetooth', type='hidden')
-      li
-        button.join-game-form__button(type='submit')= 'Join'
+    ul.players
+      if users.length
+        each user, i in users
+          li(data-bluetooth=user.bluetooth)= user.username
+            if user.score > 0
+              span.score= user.score
+      else
+        li= 'Waiting for players'
+
+    h1.join-game-heading= 'Join the game'
+
+    form.join-game-form
+      ul
+        li
+          input.join-game-form__username(name='username')
+          input.join-game-form__bluetooth(name='bluetooth', type='hidden')
+        li
+          button.join-game-form__button(type='submit')= 'Join'
+
+    button.leave-game-button= 'Leave Game'
+
+    button.increment-score= '+1 score'
 
   button.reset-button= 'Reset'
-  button.leave-game-button= 'Leave Game'
-
-  button.increment-score= '+1 score'

@@ -1,12 +1,17 @@
 .joined-game .join-game-form,
 .joined-game .join-game-heading,
 .leave-game-button,
-.increment-score {
+.increment-score,
+.end-game-message,
+/*.reset-button,*/
+.is-ended .game-view {
   display: none;
 }
 
 .joined-game .leave-game-button,
-.is-assassin .increment-score {
+.is-assassin .increment-score,
+.is-ended .end-game-message/*,
+.is-ended .reset-button*/ {
   display: block;
 }
 

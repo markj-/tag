@@ -91,7 +91,7 @@ var incrementScore = function( data ) {
     $inc: {
       score: 1
     }
-  }).on('success', updatePlayers );
+  }).on('success', updatePlayers);
 };
 
 io.sockets.on('connection', function (socket) {

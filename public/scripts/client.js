@@ -23,15 +23,22 @@ var socket = io.connect('http://localhost'),
     if ( data.length ) {
       players.innerHTML = '';
       data.forEach(function( player ) {
+        if ( player.score === 10 ) {
+          endGame();
+        }
         players.innerHTML += '<li data-bluetooth="' + player.bluetooth + '">' + player.username + '<span class="score">' + (player.score || '') + '</span></li>';
       });
     } else {
+      document.body.classList.remove( 'is-ended' );
       players.innerHTML = '<li>Waiting for players</li>';
     }
   },
   setBluetoothId = function() {
     // temp until I am given bluetooth id from device
     bluetooth.value = Math.floor(Math.random()*100000);
+  },
+  endGame = function() {
+    document.body.classList.add( 'is-ended' );
   };
 
 setBluetoothId();
