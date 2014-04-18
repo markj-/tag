@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.0.7'),
+var socket = io.connect('http://localhost'),
   form = document.querySelector('.join-game-form'),
   players = document.querySelector('.players'),
   username = form.querySelector('.join-game-form__username'),

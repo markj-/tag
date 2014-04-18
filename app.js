@@ -4,7 +4,7 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var http = require('http');
 
-var db = monk('192.168.0.7:27017/tag');
+var db = monk('localhost:27017/tag');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
