@@ -4,15 +4,50 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var http = require('http');
 
-var db = monk('localhost:27017/tag');
+var db = monk('192.168.0.7:27017/tag');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
+var updatePlayers = function() {
+  var collection = db.get('users');
+  collection.find({},function(e,docs){
+    io.sockets.emit( 'updatePlayers', docs );
+  });
+};
+
+var addPlayer = function( data ) {
+  var collection = db.get('users');
+  var op = collection.insert( data );
+  op.on('complete', updatePlayers );
+};
+
+var removePlayer = function( data ) {
+  var collection = db.get('users');
+  var op = collection.remove({
+    bluetooth: data.bluetooth
+  });
+  op.on( 'complete', updatePlayers );
+};
+
+var clearPlayers = function() {
+  db.get( 'users' ).drop( updatePlayers );
+  updatePlayers();
+  io.sockets.emit('reset');
+};
+
 io.sockets.on('connection', function (socket) {
-  socket.on('it', function() {
-    console.log('works');
-  })
+  socket.on( 'newPlayer', function( data ) {
+    addPlayer( data );
+  });
+
+  socket.on( 'reset', function() {
+    clearPlayers();
+  });
+
+  socket.on( 'leave', function( data ) {
+    removePlayer( data );
+  });
 });
 
 var routes = require('./routes');
@@ -33,8 +68,6 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-
-app.get('/users', routes.users);
+app.get('/', routes.index(db));
 
 server.listen(3000);

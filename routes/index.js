@@ -1,7 +1,8 @@
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
-};
-
-exports.users = function(req, res){
-  res.send('users');
+exports.index = function(db) {
+  return function(req, res) {
+    var collection = db.get('users');
+    collection.find({},function(e,docs){
+      res.render('index', { users: docs });
+    });
+  };
 };

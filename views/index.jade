@@ -1,6 +1,24 @@
 extends layout
 
 block content
-  h1= 'Join the game'
+  h1= 'Players'
 
-  button= 'Join'
+  ul.players
+    if users.length
+      each user, i in users
+        li(data-bluetooth=user.bluetooth)= user.username
+    else
+      li= 'Waiting for players'
+
+  h1.join-game-heading= 'Join the game'
+
+  form.join-game-form
+    ul
+      li
+        input.join-game-form__username(name='username')
+        input.join-game-form__bluetooth(name='bluetooth', type='hidden', value='123')
+      li
+        button.join-game-form__button(type='submit')= 'Join'
+
+  button.reset-button= 'Reset'
+  button.leave-game-button= 'Leave Game'

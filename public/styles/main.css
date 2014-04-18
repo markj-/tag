@@ -1,0 +1,9 @@
+.joined-game .join-game-form,
+.joined-game .join-game-heading,
+.leave-game-button {
+  display: none;
+}
+
+.joined-game .leave-game-button {
+  display: block;
+}
