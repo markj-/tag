@@ -9,6 +9,15 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
+var chooseAssassin = function( count ) {
+  var choice = Math.floor( Math.random()*(count + 1) );
+  io.sockets.clients().forEach(function (socket, i) {
+    if ( i === choice ) {
+      socket.emit( 'chosen' );
+    }
+  });
+};
+
 var updatePlayers = function() {
   var collection = db.get('users');
   collection.find({},function(e,docs){
@@ -19,7 +28,14 @@ var updatePlayers = function() {
 var addPlayer = function( data ) {
   var collection = db.get('users');
   var op = collection.insert( data );
-  op.on('complete', updatePlayers );
+  op.on('complete', function() {
+    collection.count({}, function (error, count) {
+      if ( count === 3 ) {
+        chooseAssassin( count );
+      }
+    });
+    updatePlayers()
+  });
 };
 
 var removePlayer = function( data ) {

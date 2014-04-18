@@ -11,6 +11,8 @@ var socket = io.connect('http://192.168.0.7'),
       bodyCl.remove( 'joined-game' );
     } else if ( state === 'joined-game' ) {
       bodyCl.add( 'joined-game' );
+    } else if ( state === 'is-assassin' ) {
+      bodyCl.add( 'is-assassin' );
     }
   };
 
@@ -37,7 +39,11 @@ leave.addEventListener('click', function() {
 
 socket.on('reset', function() {
   updateState( 'left-game' );
-})
+});
+
+socket.on('chosen', function() {
+  updateState( 'is-assassin' );
+});
 
 socket.on( 'updatePlayers', function( data ) {
   if ( data.length ) {

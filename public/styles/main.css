@@ -7,3 +7,11 @@
 .joined-game .leave-game-button {
   display: block;
 }
+
+body {
+  background-color: red;
+}
+
+.is-assassin {
+  background-color: green;
+}
