@@ -7,13 +7,16 @@ var socket = io.connect('http://localhost'),
   leave = document.querySelector('.leave-game-button'),
   leaveGame = function() {
     document.body.classList.remove( 'joined-game' );
-    document.body.classList.remove( 'is-assassin' );
+    stopBeingAssassin();
   },
   joinGame = function() {
     document.body.classList.add( 'joined-game' );
   },
   becomeAssassin = function() {
     document.body.classList.add( 'is-assassin' );
+  },
+  stopBeingAssassin = function() {
+    document.body.classList.remove( 'is-assassin' );
   },
   updatePlayers = function( data ) {
     if ( data.length ) {
@@ -53,5 +56,7 @@ socket.on('join', joinGame );
 socket.on('leave', leaveGame );
 
 socket.on('chosen', becomeAssassin );
+
+socket.on('unchosen', stopBeingAssassin );
 
 socket.on( 'updatePlayers', updatePlayers );
