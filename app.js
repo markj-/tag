@@ -13,7 +13,7 @@ var assassin = null;
 
 var chooseAssassin = function( count ) {
   var choice = Math.floor( Math.random()*(count + 1) );
-  io.sockets.clients().forEach(function (socket, i) {
+  io.sockets.clients('players').forEach(function (socket, i) {
     if ( i === choice ) {
       assassin = socket;
       socket.emit( 'chosen' );
@@ -44,6 +44,7 @@ var addPlayer = function( data, socket ) {
     updateAssassin();
     updatePlayers();
     socket.emit('join');
+    socket.join('players');
   });
 };
 
@@ -59,6 +60,7 @@ var removePlayer = function( data, socket ) {
     updateAssassin();
     updatePlayers();
     socket.emit('leave');
+    socket.leave('players');
   });
 };
 
@@ -70,6 +72,9 @@ var clearPlayers = function() {
   db.get( 'users' ).drop( updatePlayers );
   updatePlayers();
   io.sockets.emit('leave');
+  io.sockets.clients('players').forEach(function( socket, i ) {
+    socket.leave('players');
+  });
 };
 
 io.sockets.on('connection', function (socket) {
