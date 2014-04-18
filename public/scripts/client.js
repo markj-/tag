@@ -7,6 +7,7 @@ var socket = io.connect('http://192.168.0.7'),
   leave = document.querySelector('.leave-game-button'),
   leaveGame = function() {
     document.body.classList.remove( 'joined-game' );
+    document.body.classList.remove( 'is-assassin' );
   },
   joinGame = function() {
     document.body.classList.add( 'joined-game' );
@@ -14,8 +15,15 @@ var socket = io.connect('http://192.168.0.7'),
   becomeAssassin = function() {
     document.body.classList.add( 'is-assassin' );
   },
-  stopBeingAssassin = function() {
-    document.body.classList.remove( 'is-assassin' );
+  updatePlayers = function( data ) {
+    if ( data.length ) {
+      players.innerHTML = '';
+      data.forEach(function( player ) {
+        players.innerHTML += '<li data-bluetooth="' + player.bluetooth + '">' + player.username + '</li>';
+      });
+    } else {
+      players.innerHTML = '<li>Waiting for players</li>';
+    }
   };
 
 // temp until I am given bluetooth id from device
@@ -27,7 +35,6 @@ form.addEventListener('submit', function( e ) {
     username: username.value,
     bluetooth: bluetooth.value
   });
-  joinGame();
 });
 
 reset.addEventListener('click', function() {
@@ -39,26 +46,12 @@ leave.addEventListener('click', function() {
     bluetooth: bluetooth.value,
     isAssassin: document.body.classList.contains( 'is-assassin' )
   });
-  leaveGame();
-  stopBeingAssassin();
 });
 
-socket.on('reset', function() {
-  leaveGame();
-  stopBeingAssassin();
-});
+socket.on('join', joinGame );
 
-socket.on('chosen', function() {
-  becomeAssassin();
-});
+socket.on('leave', leaveGame );
 
-socket.on( 'updatePlayers', function( data ) {
-  if ( data.length ) {
-    players.innerHTML = '';
-    data.forEach(function( player ) {
-      players.innerHTML += '<li data-bluetooth="' + player.bluetooth + '">' + player.username + '</li>';
-    });
-  } else {
-    players.innerHTML = '<li>Waiting for players</li>';
-  }
-});
+socket.on('chosen', becomeAssassin );
+
+socket.on( 'updatePlayers', updatePlayers );

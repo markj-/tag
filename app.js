@@ -37,16 +37,20 @@ var updatePlayers = function() {
   });
 };
 
-var addPlayer = function( data ) {
+var addPlayer = function( data, socket ) {
   var collection = db.get('users');
   var op = collection.insert( data );
   op.on('complete', function() {
     updateAssassin();
     updatePlayers();
+    socket.emit('join');
   });
 };
 
-var removePlayer = function( data ) {
+var removePlayer = function( data, socket ) {
+  if ( data.isAssassin ) {
+    clearAssassin();
+  }
   var collection = db.get('users');
   var op = collection.remove({
     bluetooth: data.bluetooth
@@ -54,18 +58,23 @@ var removePlayer = function( data ) {
   op.on('complete', function() {
     updateAssassin();
     updatePlayers();
+    socket.emit('leave');
   });
+};
+
+var clearAssassin = function() {
+  assassin = null;
 };
 
 var clearPlayers = function() {
   db.get( 'users' ).drop( updatePlayers );
   updatePlayers();
-  io.sockets.emit('reset');
+  io.sockets.emit('leave');
 };
 
 io.sockets.on('connection', function (socket) {
   socket.on( 'newPlayer', function( data ) {
-    addPlayer( data );
+    addPlayer( data, socket );
   });
 
   socket.on( 'reset', function() {
@@ -73,10 +82,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on( 'leave', function( data ) {
-    if ( data.isAssassin ) {
-      assassin = null;
-    }
-    removePlayer( data );
+    removePlayer( data, socket );
   });
 });
 
