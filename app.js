@@ -21,6 +21,15 @@ var chooseAssassin = function( count ) {
   });
 };
 
+var updateAssassin = function() {
+  var collection = db.get('users');
+  collection.count({}, function (error, count) {
+    if ( count >= 3 && assassin == null ) {
+      chooseAssassin( count );
+    }
+  });
+};
+
 var updatePlayers = function() {
   var collection = db.get('users');
   collection.find({},function(e,docs){
@@ -32,12 +41,8 @@ var addPlayer = function( data ) {
   var collection = db.get('users');
   var op = collection.insert( data );
   op.on('complete', function() {
-    collection.count({}, function (error, count) {
-      if ( count >= 3 && assassin == null ) {
-        chooseAssassin( count );
-      }
-    });
-    updatePlayers()
+    updateAssassin();
+    updatePlayers();
   });
 };
 
@@ -47,12 +52,8 @@ var removePlayer = function( data ) {
     bluetooth: data.bluetooth
   });
   op.on('complete', function() {
-    collection.count({}, function (error, count) {
-      if ( count >= 3 && assassin == null ) {
-        chooseAssassin( count );
-      }
-    });
-    updatePlayers()
+    updateAssassin();
+    updatePlayers();
   });
 };
 
