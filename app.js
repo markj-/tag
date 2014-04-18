@@ -9,10 +9,13 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
+var assassin = null;
+
 var chooseAssassin = function( count ) {
   var choice = Math.floor( Math.random()*(count + 1) );
   io.sockets.clients().forEach(function (socket, i) {
     if ( i === choice ) {
+      assassin = socket;
       socket.emit( 'chosen' );
     }
   });
@@ -30,7 +33,7 @@ var addPlayer = function( data ) {
   var op = collection.insert( data );
   op.on('complete', function() {
     collection.count({}, function (error, count) {
-      if ( count === 3 ) {
+      if ( count >= 3 && assassin == null ) {
         chooseAssassin( count );
       }
     });
@@ -43,7 +46,14 @@ var removePlayer = function( data ) {
   var op = collection.remove({
     bluetooth: data.bluetooth
   });
-  op.on( 'complete', updatePlayers );
+  op.on('complete', function() {
+    collection.count({}, function (error, count) {
+      if ( count >= 3 && assassin == null ) {
+        chooseAssassin( count );
+      }
+    });
+    updatePlayers()
+  });
 };
 
 var clearPlayers = function() {
@@ -62,6 +72,9 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on( 'leave', function( data ) {
+    if ( data.isAssassin ) {
+      assassin = null;
+    }
     removePlayer( data );
   });
 });

@@ -4,16 +4,18 @@ var socket = io.connect('http://192.168.0.7'),
   username = form.querySelector('.join-game-form__username'),
   bluetooth = form.querySelector('.join-game-form__bluetooth'),
   reset = document.querySelector('.reset-button'),
-  leave = document.querySelector('.leave-game-button')
-  updateState = function( state ) {
-    var bodyCl = document.body.classList;
-    if ( state === 'left-game' ) {
-      bodyCl.remove( 'joined-game' );
-    } else if ( state === 'joined-game' ) {
-      bodyCl.add( 'joined-game' );
-    } else if ( state === 'is-assassin' ) {
-      bodyCl.add( 'is-assassin' );
-    }
+  leave = document.querySelector('.leave-game-button'),
+  leaveGame = function() {
+    document.body.classList.remove( 'joined-game' );
+  },
+  joinGame = function() {
+    document.body.classList.add( 'joined-game' );
+  },
+  becomeAssassin = function() {
+    document.body.classList.add( 'is-assassin' );
+  },
+  stopBeingAssassin = function() {
+    document.body.classList.remove( 'is-assassin' );
   };
 
 // temp until I am given bluetooth id from device
@@ -25,27 +27,28 @@ form.addEventListener('submit', function( e ) {
     username: username.value,
     bluetooth: bluetooth.value
   });
-  updateState( 'joined-game' );
+  joinGame();
 });
 
 reset.addEventListener('click', function() {
   socket.emit( 'reset' );
-  updateState( 'left-game' );
 });
 
 leave.addEventListener('click', function() {
   socket.emit( 'leave', {
-    bluetooth: bluetooth.value
+    bluetooth: bluetooth.value,
+    isAssassin: document.body.classList.contains( 'is-assassin' )
   });
-  updateState( 'left-game' );
+  leaveGame();
+  stopBeingAssassin();
 });
 
 socket.on('reset', function() {
-  updateState( 'left-game' );
+  leaveGame();
 });
 
 socket.on('chosen', function() {
-  updateState( 'is-assassin' );
+  becomeAssassin();
 });
 
 socket.on( 'updatePlayers', function( data ) {
