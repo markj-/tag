@@ -12,7 +12,7 @@ var io = require('socket.io').listen(server);
 var assassin = null;
 
 var chooseAssassin = function( count ) {
-  var choice = Math.floor( Math.random()*(count + 1) );
+  var choice = Math.floor( Math.random()*(count) );
   io.sockets.clients('players').forEach(function (socket, i) {
     if ( i === choice ) {
       assassin = socket;
