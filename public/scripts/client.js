@@ -45,6 +45,7 @@ leave.addEventListener('click', function() {
 
 socket.on('reset', function() {
   leaveGame();
+  stopBeingAssassin();
 });
 
 socket.on('chosen', function() {
