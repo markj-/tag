@@ -16,6 +16,9 @@ var socket = io.connect('http://192.168.0.7'),
     }
   };
 
+// temp until I am given bluetooth id from device
+bluetooth.value = Math.floor(Math.random()*100000);
+
 form.addEventListener('submit', function( e ) {
   e.preventDefault();
   socket.emit( 'newPlayer', {
