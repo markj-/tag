@@ -26,7 +26,7 @@ var updateAssassin = function() {
   collection.count({}, function (error, count) {
     if ( count >= 3 && assassin == null ) {
       chooseAssassin( count );
-    } else {
+    } else if ( count < 3 && assassin ) {
       clearAssassin();
     }
   });
