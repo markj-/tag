@@ -27,10 +27,13 @@ var socket = io.connect('http://localhost'),
     } else {
       players.innerHTML = '<li>Waiting for players</li>';
     }
+  },
+  setBluetoothId = function() {
+    // temp until I am given bluetooth id from device
+    bluetooth.value = Math.floor(Math.random()*100000);
   };
 
-// temp until I am given bluetooth id from device
-bluetooth.value = Math.floor(Math.random()*100000);
+setBluetoothId();
 
 form.addEventListener('submit', function( e ) {
   e.preventDefault();
