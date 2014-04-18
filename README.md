@@ -18,4 +18,4 @@ mkdir data && mongod --dbpath data &
 npm start
 ```
 
-Open http://localhost:3000 in your favourite browser
+Open [http://localhost:3000](http://localhost:3000 ) in your favourite browser
