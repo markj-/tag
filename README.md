@@ -5,16 +5,17 @@
 
 # Installation
 
-```cd /path/to/app
-
-npm install```
+```
+cd /path/to/app
+npm install
+```
 
 # Usage
 
-```cd /path/to/app
-
+```
+cd /path/to/app
 mkdir data && mongod --dbpath data &
-
-npm start```
+npm start
+```
 
 Open http://localhost:3000 in your favourite browser
