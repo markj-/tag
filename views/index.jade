@@ -7,6 +7,8 @@ block content
     if users.length
       each user, i in users
         li(data-bluetooth=user.bluetooth)= user.username
+          if user.score > 0
+            span.score= user.score
     else
       li= 'Waiting for players'
 
@@ -22,3 +24,5 @@ block content
 
   button.reset-button= 'Reset'
   button.leave-game-button= 'Leave Game'
+
+  button.increment-score= '+1 score'

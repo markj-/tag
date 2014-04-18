@@ -83,6 +83,17 @@ var clearPlayers = function() {
   });
 };
 
+var incrementScore = function( data ) {
+  var collection = db.get( 'users' );
+  collection.update({
+    bluetooth: data.bluetooth
+  }, {
+    $inc: {
+      score: 1
+    }
+  }).on('success', updatePlayers );
+};
+
 io.sockets.on('connection', function (socket) {
   socket.on( 'newPlayer', function( data ) {
     addPlayer( data, socket );
@@ -94,6 +105,12 @@ io.sockets.on('connection', function (socket) {
 
   socket.on( 'leave', function( data ) {
     removePlayer( data, socket );
+  });
+
+  socket.on( 'increment', function( data ) {
+    if ( data.isAssassin ) {
+      incrementScore( data, socket );
+    }
   });
 });
 

@@ -1,10 +1,12 @@
 .joined-game .join-game-form,
 .joined-game .join-game-heading,
-.leave-game-button {
+.leave-game-button,
+.increment-score {
   display: none;
 }
 
-.joined-game .leave-game-button {
+.joined-game .leave-game-button,
+.is-assassin .increment-score {
   display: block;
 }
 
@@ -14,4 +16,9 @@ body {
 
 .is-assassin {
   background-color: green;
+}
+
+.score {
+  font-weight: bold;
+  margin-left: 5px;
 }
