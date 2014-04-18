@@ -1,0 +1,9 @@
+{
+  "name": "foo",
+  "version": "0.0.0",
+  "dependencies": {
+    "socket.io": "^0.9.16",
+    "express": "^4.0.0",
+    "mongodb": "^1.4.0"
+  }
+}
