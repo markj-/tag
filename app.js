@@ -50,7 +50,8 @@ var updatePlayers = function() {
   });
 };
 
-var addPlayer = function( data, socket ) {
+var addPlayer = function( data ) {
+  var socket = this;
   data.socket = socket.id;
   var collection = db.get('users');
   var op = collection.insert( data );
@@ -62,7 +63,8 @@ var addPlayer = function( data, socket ) {
   });
 };
 
-var removePlayer = function( socket ) {
+var removePlayer = function() {
+  var socket = this;
   socket.get( 'assassin', function( err, isAssassin ) {
     if ( isAssassin ) {
       clearAssassin();
@@ -90,7 +92,8 @@ var clearPlayers = function() {
   });
 };
 
-var incrementScore = function( socket ) {
+var incrementScore = function() {
+  var socket = this;
   socket.get( 'assassin', function( err, isAssassin ) {
     if ( isAssassin ) {
       var collection = db.get( 'users' );
@@ -106,25 +109,15 @@ var incrementScore = function( socket ) {
 };
 
 io.sockets.on('connection', function ( socket ) {
-  socket.on( 'newPlayer', function( data ) {
-    addPlayer( data, this );
-  });
+  socket.on( 'newPlayer', addPlayer );
 
-  socket.on( 'increment', function() {
-    incrementScore( this );
-  });
+  socket.on( 'increment', incrementScore );
 
-  socket.on( 'leave', function() {
-    removePlayer( this );
-  });
+  socket.on( 'leave', removePlayer );
 
-  socket.on( 'disconnect', function() {
-    removePlayer( this );
-  });
+  socket.on( 'disconnect', removePlayer );
 
-  socket.on( 'reset', function() {
-    clearPlayers();
-  });
+  socket.on( 'reset', clearPlayers );
 });
 
 var routes = require('./routes');
