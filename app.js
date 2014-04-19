@@ -11,12 +11,23 @@ var io = require('socket.io').listen(server);
 
 var assassin = null;
 
+var clearAssassin = function() {
+  if ( assassin ) {
+    assassin.set( 'assassin', false, function() {
+      assassin.emit( 'unchosen' );
+      assassin = null;
+    });
+  }
+};
+
 var chooseAssassin = function( count ) {
   var choice = Math.floor( Math.random()*(count) );
   io.sockets.clients('players').forEach(function (socket, i) {
     if ( i === choice ) {
-      assassin = socket;
-      assassin.emit( 'chosen' );
+      socket.set( 'assassin', true, function() {
+        assassin = socket;
+        assassin.emit( 'chosen' );
+      });
     }
   });
 };
@@ -40,6 +51,7 @@ var updatePlayers = function() {
 };
 
 var addPlayer = function( data, socket ) {
+  data.socket = socket.id;
   var collection = db.get('users');
   var op = collection.insert( data );
   op.on('complete', function() {
@@ -50,27 +62,22 @@ var addPlayer = function( data, socket ) {
   });
 };
 
-var removePlayer = function( data, socket ) {
-  if ( data.isAssassin ) {
-    clearAssassin();
-  }
-  var collection = db.get('users');
-  var op = collection.remove({
-    bluetooth: data.bluetooth
+var removePlayer = function( socket ) {
+  socket.get( 'assassin', function( err, isAssassin ) {
+    if ( isAssassin ) {
+      clearAssassin();
+    }
+    var collection = db.get('users');
+    var op = collection.remove({
+      socket: socket.id
+    });
+    op.on('complete', function() {
+      updateAssassin();
+      updatePlayers();
+      socket.emit('leave');
+      socket.leave('players');
+    });
   });
-  op.on('complete', function() {
-    updateAssassin();
-    updatePlayers();
-    socket.emit('leave');
-    socket.leave('players');
-  });
-};
-
-var clearAssassin = function() {
-  if ( assassin ) {
-    assassin.emit('unchosen');
-  }
-  assassin = null;
 };
 
 var clearPlayers = function() {
@@ -83,34 +90,40 @@ var clearPlayers = function() {
   });
 };
 
-var incrementScore = function( data ) {
-  var collection = db.get( 'users' );
-  collection.update({
-    bluetooth: data.bluetooth
-  }, {
-    $inc: {
-      score: 1
+var incrementScore = function( socket ) {
+  socket.get( 'assassin', function( err, isAssassin ) {
+    if ( isAssassin ) {
+      var collection = db.get( 'users' );
+      collection.update({
+        socket: socket.id
+      }, {
+        $inc: {
+          score: 1
+        }
+      }).on('success', updatePlayers);
     }
-  }).on('success', updatePlayers);
+  });
 };
 
-io.sockets.on('connection', function (socket) {
+io.sockets.on('connection', function ( socket ) {
   socket.on( 'newPlayer', function( data ) {
-    addPlayer( data, socket );
+    addPlayer( data, this );
+  });
+
+  socket.on( 'increment', function() {
+    incrementScore( this );
+  });
+
+  socket.on( 'leave', function() {
+    removePlayer( this );
+  });
+
+  socket.on( 'disconnect', function() {
+    removePlayer( this );
   });
 
   socket.on( 'reset', function() {
     clearPlayers();
-  });
-
-  socket.on( 'leave', function( data ) {
-    removePlayer( data, socket );
-  });
-
-  socket.on( 'increment', function( data ) {
-    if ( data.isAssassin ) {
-      incrementScore( data, socket );
-    }
   });
 });
 

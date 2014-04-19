@@ -58,15 +58,13 @@ reset.addEventListener('click', function() {
 
 leave.addEventListener('click', function() {
   socket.emit( 'leave', {
-    bluetooth: bluetooth.value,
-    isAssassin: document.body.classList.contains( 'is-assassin' )
+    bluetooth: bluetooth.value
   });
 });
 
 increment.addEventListener('click', function() {
   socket.emit( 'increment', {
-    bluetooth: bluetooth.value,
-    isAssassin: document.body.classList.contains( 'is-assassin' )
+    bluetooth: bluetooth.value
   });
 });
 
