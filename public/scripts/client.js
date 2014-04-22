@@ -61,13 +61,13 @@ leave.addEventListener('click', function() {
   });
 });
 
-socket.on('join', joinGame );
+socket.on( 'join', joinGame );
 
-socket.on('leave', leaveGame );
+socket.on( 'leave', leaveGame );
 
-socket.on('chosen', becomeAssassin );
+socket.on( 'chosen', becomeAssassin );
 
-socket.on('unchosen', stopBeingAssassin );
+socket.on( 'unchosen', stopBeingAssassin );
 
 socket.on( 'updatePlayers', updatePlayers );
 
