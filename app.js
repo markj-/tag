@@ -11,7 +11,8 @@ var io = require('socket.io').listen(server);
 
 var assassin = null;
 
-var duration = 10000;
+var gameDuration = 20000;
+var duration = gameDuration;
 var countDownTick;
 
 var clearAssassin = function() {
@@ -108,7 +109,8 @@ var clearPlayers = function() {
 var resetGame = function() {
   console.log('GAME RESET');
   clearPlayers();
-  duration = 10000;
+  pauseGame();
+  duration = gameDuration;
 };
 
 var endGame = function() {
