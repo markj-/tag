@@ -40,8 +40,6 @@ var updateAssassin = function() {
   collection.count({}, function (error, count) {
     if ( assassin == null ) {
       chooseAssassin( count );
-    } else if ( count < 3 && assassin ) {
-      clearAssassin();
     }
   });
 };
@@ -60,7 +58,7 @@ var addPlayer = function( data ) {
   var op = collection.insert( data );
   op.on('complete', function() {
     collection.count({}, function (error, count) {
-      if ( count >= 3 ) {
+      if ( count === 3 ) {
         startGame();
         updateAssassin();
       }
@@ -82,10 +80,17 @@ var removePlayer = function() {
       socket: socket.id
     });
     op.on('complete', function() {
-      updateAssassin();
-      updatePlayers();
-      socket.emit('leave');
-      socket.leave('players');
+      collection.count({}, function (error, count) {
+        if ( count < 3 ) {
+          pauseGame();
+          updateAssassin();
+        } else {
+          startGame();
+        }
+        updatePlayers();
+        socket.emit('leave');
+        socket.leave('players');
+      });
     });
   });
 };
@@ -101,19 +106,27 @@ var clearPlayers = function() {
 };
 
 var resetGame = function() {
+  console.log('GAME RESET');
   clearPlayers();
   duration = 10000;
 };
 
 var endGame = function() {
+  console.log('GAME ENDED');
   clearInterval( countDownTick );
   io.sockets.emit( 'endGame' );
 };
 
+var pauseGame = function() {
+  console.log('GAME PAUSED');
+  clearInterval( countDownTick );
+};
+
 var startGame = function() {
+  console.log('GAME STARTED / RESUMED');
   countDownTick = setInterval(function() {
     duration = duration - 1000;
-    console.log( duration );
+    console.log( 'TIME REMAINING: ', duration / 1000, 'seconds' );
     if ( duration === 0 ) {
       endGame();
     }

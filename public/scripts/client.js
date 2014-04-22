@@ -37,7 +37,7 @@ var socket = io.connect('http://localhost'),
     document.body.classList.add( 'is-ended' );
   },
   startGame = function() {
-    document.body.classList.add( 'is-started' );
+    document.body.classList.add( 'in-progress' );
   };
 
 setBluetoothId();
