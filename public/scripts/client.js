@@ -5,7 +5,6 @@ var socket = io.connect('http://localhost'),
   bluetooth = form.querySelector('.join-game-form__bluetooth'),
   reset = document.querySelector('.reset-button'),
   leave = document.querySelector('.leave-game-button'),
-  increment = document.querySelector('.increment-score'),
   leaveGame = function() {
     document.body.classList.remove( 'joined-game' );
     stopBeingAssassin();
@@ -23,9 +22,6 @@ var socket = io.connect('http://localhost'),
     if ( data.length ) {
       players.innerHTML = '';
       data.forEach(function( player ) {
-        if ( player.score === 10 ) {
-          endGame();
-        }
         players.innerHTML += '<li data-bluetooth="' + player.bluetooth + '">' + player.username + '<span class="score">' + (player.score || '') + '</span></li>';
       });
     } else {
@@ -62,12 +58,6 @@ leave.addEventListener('click', function() {
   });
 });
 
-increment.addEventListener('click', function() {
-  socket.emit( 'increment', {
-    bluetooth: bluetooth.value
-  });
-});
-
 socket.on('join', joinGame );
 
 socket.on('leave', leaveGame );
@@ -77,3 +67,5 @@ socket.on('chosen', becomeAssassin );
 socket.on('unchosen', stopBeingAssassin );
 
 socket.on( 'updatePlayers', updatePlayers );
+
+socket.on( 'endGame', endGame );

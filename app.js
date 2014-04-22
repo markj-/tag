@@ -92,26 +92,8 @@ var clearPlayers = function() {
   });
 };
 
-var incrementScore = function() {
-  var socket = this;
-  socket.get( 'assassin', function( err, isAssassin ) {
-    if ( isAssassin ) {
-      var collection = db.get( 'users' );
-      collection.update({
-        socket: socket.id
-      }, {
-        $inc: {
-          score: 1
-        }
-      }).on('success', updatePlayers);
-    }
-  });
-};
-
 io.sockets.on('connection', function ( socket ) {
   socket.on( 'newPlayer', addPlayer );
-
-  socket.on( 'increment', incrementScore );
 
   socket.on( 'leave', removePlayer );
 
