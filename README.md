@@ -2,6 +2,7 @@
 
 * [Node.js](http://nodejs.org/)
 * [MongoDB](http://www.mongodb.org/)
+* [nodemon](https://github.com/remy/nodemon) install via npm ```npm install -g nodemon```
 
 # Installation
 
