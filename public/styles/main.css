@@ -3,6 +3,8 @@
 .leave-game-button,
 .increment-score,
 .end-game-message,
+.end-game-youre-shit,
+.end-game-congrats,
 /*.reset-button,*/
 .is-ended .game-view {
   display: none;
@@ -10,8 +12,13 @@
 
 .joined-game .leave-game-button,
 .is-assassin .increment-score,
-.is-ended .end-game-message/*,
-.is-ended .reset-button*/ {
+.is-ended .end-game-message,
+.is-ended.is-loser .end-game-youre-shit
+/*.is-ended .reset-button*/ {
+  display: block;
+}
+
+.is-ended:not(.is-loser) .end-game-congrats {
   display: block;
 }
 
@@ -113,4 +120,13 @@ ul {
   display: none;
 }
 
+
+
+.is-ended {
+
+}
+
+.is-loser {
+
+}
 
