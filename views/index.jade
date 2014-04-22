@@ -5,7 +5,11 @@ block content
   h1.end-game-message= 'Game Over'
 
   div.game-view
-    h1= 'Players'
+
+    img.logo(src="/images/logo.png")
+
+    h1.targets= 'Targets:'
+    h1.threats= 'Threats:'
 
     ul.players
       if users.length
