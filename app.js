@@ -81,8 +81,8 @@ var removePlayer = function() {
     });
     op.on('complete', function() {
       collection.count({}, function (error, count) {
+        pauseGame();
         if ( count < 3 ) {
-          pauseGame();
           updateAssassin();
         } else {
           startGame();
