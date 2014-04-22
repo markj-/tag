@@ -15,11 +15,24 @@ var gameDuration = 20000;
 var duration = gameDuration;
 var countDownTick;
 
-var clearAssassin = function() {
+var switchAssassin = function() {
+  var socket = this;
+  clearAssassin( function() {
+    socket.set( 'assassin', true, function() {
+      assassin = socket;
+      assassin.emit( 'chosen' );
+    });
+  });
+};
+
+var clearAssassin = function( cb ) {
   if ( assassin ) {
     assassin.set( 'assassin', false, function() {
       assassin.emit( 'unchosen' );
       assassin = null;
+      if ( cb ) {
+        cb();
+      }
     });
   }
 };
@@ -145,6 +158,8 @@ io.sockets.on('connection', function ( socket ) {
   socket.on( 'disconnect', removePlayer );
 
   socket.on( 'reset', resetGame );
+
+  socket.on( 'tagged', switchAssassin );
 });
 
 var routes = require('./routes');

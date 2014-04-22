@@ -79,3 +79,7 @@ socket.on( 'endGame', endGame );
 socket.on( 'startGame', startGame );
 
 socket.on( 'loseGame', loseGame );
+
+window.tagged = function() {
+  socket.emit( 'tagged' );
+}
