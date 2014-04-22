@@ -78,4 +78,4 @@ socket.on( 'endGame', endGame );
 
 socket.on( 'startGame', startGame );
 
-socket.on( 'loseGame', startGame );
+socket.on( 'loseGame', loseGame );
