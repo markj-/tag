@@ -11,6 +11,9 @@ var io = require('socket.io').listen(server);
 
 var assassin = null;
 
+var duration = 10000;
+var countDownTick;
+
 var clearAssassin = function() {
   if ( assassin ) {
     assassin.set( 'assassin', false, function() {
@@ -35,7 +38,7 @@ var chooseAssassin = function( count ) {
 var updateAssassin = function() {
   var collection = db.get('users');
   collection.count({}, function (error, count) {
-    if ( count >= 3 && assassin == null ) {
+    if ( assassin == null ) {
       chooseAssassin( count );
     } else if ( count < 3 && assassin ) {
       clearAssassin();
@@ -56,10 +59,15 @@ var addPlayer = function( data ) {
   var collection = db.get('users');
   var op = collection.insert( data );
   op.on('complete', function() {
-    updateAssassin();
-    updatePlayers();
-    socket.emit('join');
-    socket.join('players');
+    collection.count({}, function (error, count) {
+      if ( count >= 3 ) {
+        startGame();
+        updateAssassin();
+      }
+      updatePlayers();
+      socket.emit('join');
+      socket.join('players');
+    });
   });
 };
 
@@ -92,6 +100,27 @@ var clearPlayers = function() {
   });
 };
 
+var resetGame = function() {
+  clearPlayers();
+  duration = 10000;
+};
+
+var endGame = function() {
+  clearInterval( countDownTick );
+  io.sockets.emit( 'endGame' );
+};
+
+var startGame = function() {
+  countDownTick = setInterval(function() {
+    duration = duration - 1000;
+    console.log( duration );
+    if ( duration === 0 ) {
+      endGame();
+    }
+  }, 1000 );
+  io.sockets.emit('startGame');
+};
+
 io.sockets.on('connection', function ( socket ) {
   socket.on( 'newPlayer', addPlayer );
 
@@ -99,7 +128,7 @@ io.sockets.on('connection', function ( socket ) {
 
   socket.on( 'disconnect', removePlayer );
 
-  socket.on( 'reset', clearPlayers );
+  socket.on( 'reset', resetGame );
 });
 
 var routes = require('./routes');
