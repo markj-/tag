@@ -115,6 +115,7 @@ var endGame = function() {
   console.log('GAME ENDED');
   clearInterval( countDownTick );
   io.sockets.emit( 'endGame' );
+  assassin.emit( 'loseGame' );
 };
 
 var pauseGame = function() {
